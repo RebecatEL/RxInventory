@@ -14,11 +14,13 @@ export default function Home() {
     // TODO: Implement database query logic here
     // For now, let's use some dummy data
     const dummyData = [
-      { expiryDate: "01/2025", status: "New", bottles: 3 },
-      { expiryDate: "01/2025", status: "Opened", bottles: 1 },
-      { expiryDate: "03/2025", status: "New", bottles: 5 },
+      { din: "01234567", expiryDate: "01/2025", status: "New", bottles: 3 },
+      { din: "01234567", expiryDate: "01/2025", status: "Opened", bottles: 1 },
+      { din: "01234567", expiryDate: "03/2025", status: "New", bottles: 5 },
     ];
-    setResults(dummyData);
+    // Filter the dummy data based on the input DIN
+    const filteredData = dummyData.filter((item) => item.din === din);
+    setResults(filteredData);
   };
 
   const handleOperation = (result: any) => {

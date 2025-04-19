@@ -70,7 +70,7 @@ export default function Home() {
                   <TableCell>{result.status}</TableCell>
                   <TableCell>{result.bottles}</TableCell>
                   <TableCell>
-                    <Button variant="accent" onClick={() => handleOperation(result)}>
+                    <Button variant="default" onClick={() => handleOperation(result)}>
                       {result.status === "New" ? "Open 1" : "Finished 1"}
                     </Button>
                   </TableCell>
@@ -83,5 +83,3 @@ export default function Home() {
     </div>
   );
 }
-
-

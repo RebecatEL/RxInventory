@@ -5,12 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Camera } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function Home() {
   const [din, setDin] = useState("");
   const [results, setResults] = useState<any[]>([]);
+  const [isDinValid, setIsDinValid] = useState(true);
 
   const handleSearch = async () => {
+    if (din.length !== 8) {
+      setIsDinValid(false);
+      return;
+    }
+
+    setIsDinValid(true);
+
     // TODO: Implement database query logic here
     // For now, let's use some dummy data
     const dummyData = [
@@ -33,18 +42,29 @@ export default function Home() {
       <h1 className="text-2xl font-bold mb-4">RxInventory</h1>
 
       {/* Input Section */}
-      <div className="mb-4 flex space-x-2">
+      <div className="mb-4 flex flex-col space-y-2">
         <Input
           type="text"
           placeholder="Enter DIN number"
           value={din}
-          onChange={(e) => setDin(e.target.value)}
+          onChange={(e) => {
+            setDin(e.target.value);
+            setIsDinValid(true); // Reset validation on input change
+          }}
         />
-        <Button onClick={handleSearch}>Search</Button>
-        <Button variant="secondary">
-          <Camera className="mr-2 h-4 w-4" />
-          Scan
-        </Button>
+        {!isDinValid && (
+          <Alert variant="destructive">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>DIN number must be 8 digits.</AlertDescription>
+          </Alert>
+        )}
+        <div className="flex space-x-2">
+            <Button onClick={handleSearch}>Search</Button>
+            <Button variant="secondary">
+            <Camera className="mr-2 h-4 w-4" />
+            Scan
+            </Button>
+        </div>
       </div>
 
       {/* Result Display Section */}
@@ -72,7 +92,7 @@ export default function Home() {
                   <TableCell>{result.status}</TableCell>
                   <TableCell>{result.bottles}</TableCell>
                   <TableCell>
-                    <Button variant="default" onClick={() => handleOperation(result)}>
+                    <Button onClick={() => handleOperation(result)}>
                       {result.status === "New" ? "Open 1" : "Finished 1"}
                     </Button>
                   </TableCell>

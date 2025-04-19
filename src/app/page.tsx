@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -11,29 +11,31 @@ export default function Home() {
   const [din, setDin] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [isDinValid, setIsDinValid] = useState(true);
-  const [hasSearched, setHasSearched] = useState(false); // Track if a search has been performed
+  const [hasSearched, setHasSearched] = useState(false);
 
-  const handleSearch = async () => {
-    if (din.length !== 8) {
-      setIsDinValid(false);
-      setHasSearched(false); // Reset hasSearched if DIN is invalid
-      return;
-    }
+  const dummyData = [
+    { din: "01234567", expiryDate: "01/2025", status: "New", bottles: 3 },
+    { din: "01234567", expiryDate: "01/2025", status: "Opened", bottles: 1 },
+    { din: "01234567", expiryDate: "03/2025", status: "New", bottles: 5 },
+  ];
 
-    setIsDinValid(true);
-    setHasSearched(true); // Set hasSearched to true after a search
+  useEffect(() => {
+    const handleSearch = async () => {
+      if (din.length === 8) {
+        setIsDinValid(true);
+        setHasSearched(true);
 
-    // TODO: Implement database query logic here
-    // For now, let's use some dummy data
-    const dummyData = [
-      { din: "01234567", expiryDate: "01/2025", status: "New", bottles: 3 },
-      { din: "01234567", expiryDate: "01/2025", status: "Opened", bottles: 1 },
-      { din: "01234567", expiryDate: "03/2025", status: "New", bottles: 5 },
-    ];
-    // Filter the dummy data based on the input DIN
-    const filteredData = dummyData.filter((item) => item.din === din);
-    setResults(filteredData);
-  };
+        const filteredData = dummyData.filter((item) => item.din === din);
+        setResults(filteredData);
+      } else {
+        setIsDinValid(din.length === 0 || din.length === 8); // Only show error if something is entered
+        setHasSearched(false);
+        setResults([]);
+      }
+    };
+
+    handleSearch();
+  }, [din]);
 
   const handleOperation = (result: any) => {
     // TODO: Implement database update logic here
@@ -62,11 +64,10 @@ export default function Home() {
           </Alert>
         )}
         <div className="flex space-x-2">
-            <Button onClick={handleSearch}>Search</Button>
-            <Button variant="secondary">
+          <Button variant="secondary">
             <Camera className="mr-2 h-4 w-4" />
             Scan
-            </Button>
+          </Button>
         </div>
       </div>
 

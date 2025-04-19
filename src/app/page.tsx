@@ -68,40 +68,44 @@ export default function Home() {
       </div>
 
       {/* Result Display Section */}
-      {results.length > 0 && (
+      {results.length > 0 || din.length === 8 ? (
         <div>
           <h2 className="text-lg font-semibold mb-2">
             Results for DIN: {din}
           </h2>
-          <Table>
-            <TableCaption>
-              A list of drugs with the same DIN number, grouped by expiry date and status.
-            </TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Expiry Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Number of Bottles</TableHead>
-                <TableHead>Operation</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {results.map((result, index) => (
-                <TableRow key={index}>
-                  <TableCell>{result.expiryDate}</TableCell>
-                  <TableCell>{result.status}</TableCell>
-                  <TableCell>{result.bottles}</TableCell>
-                  <TableCell>
-                    <Button onClick={() => handleOperation(result)}>
-                      {result.status === "New" ? "Open 1" : "Finished 1"}
-                    </Button>
-                  </TableCell>
+          {results.length > 0 ? (
+            <Table>
+              <TableCaption>
+                A list of drugs with the same DIN number, grouped by expiry date and status.
+              </TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Expiry Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Number of Bottles</TableHead>
+                  <TableHead>Operation</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {results.map((result, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{result.expiryDate}</TableCell>
+                    <TableCell>{result.status}</TableCell>
+                    <TableCell>{result.bottles}</TableCell>
+                    <TableCell>
+                      <Button onClick={() => handleOperation(result)}>
+                        {result.status === "New" ? "Open 1" : "Finished 1"}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div>No result</div>
+          )}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

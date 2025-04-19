@@ -11,14 +11,17 @@ export default function Home() {
   const [din, setDin] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [isDinValid, setIsDinValid] = useState(true);
+  const [hasSearched, setHasSearched] = useState(false); // Track if a search has been performed
 
   const handleSearch = async () => {
     if (din.length !== 8) {
       setIsDinValid(false);
+      setHasSearched(false); // Reset hasSearched if DIN is invalid
       return;
     }
 
     setIsDinValid(true);
+    setHasSearched(true); // Set hasSearched to true after a search
 
     // TODO: Implement database query logic here
     // For now, let's use some dummy data
@@ -68,7 +71,7 @@ export default function Home() {
       </div>
 
       {/* Result Display Section */}
-      {results.length > 0 || din.length === 8 ? (
+      {(results.length > 0 || hasSearched) ? (
         <div>
           <h2 className="text-lg font-semibold mb-2">
             Results for DIN: {din}

@@ -37,9 +37,84 @@ export default function Home() {
     handleSearch();
   }, [din]);
 
-  const handleOperation = (result: any) => {
+  const handleOperation = (result: any, operationType: string) => {
     // TODO: Implement database update logic here
-    console.log("Operation clicked for:", result);
+    console.log(`Operation ${operationType} clicked for:`, result);
+
+    if (operationType === "Open 1") {
+      // Find the index of the "New" status row for this DIN and Expiry Date
+      const newIndex = results.findIndex(
+        (item) => item.status === "New" && item.expiryDate === result.expiryDate && item.din === result.din
+      );
+  
+      // Find the index of the "Opened" status row for this DIN and Expiry Date
+      const openedIndex = results.findIndex(
+        (item) => item.status === "Opened" && item.expiryDate === result.expiryDate && item.din === result.din
+      );
+  
+      // Check if both "New" and "Opened" status rows were found
+      if (newIndex !== -1 && openedIndex !== -1) {
+        // Update the number of bottles for "New" and "Opened" statuses
+        const updatedResults = [...results];
+        updatedResults[newIndex] = { ...updatedResults[newIndex], bottles: updatedResults[newIndex].bottles - 1 };
+        updatedResults[openedIndex] = { ...updatedResults[openedIndex], bottles: updatedResults[openedIndex].bottles + 1 };
+  
+        // Update the results state with the updated data
+        setResults(updatedResults);
+      } else {
+        console.error("Could not find 'New' or 'Opened' status row for DIN:", result.din, "and Expiry Date:", result.expiryDate);
+      }
+    }
+  
+    if (operationType === "Finished 1") {
+            // Find the index of the "Opened" status row
+            const openedIndex = results.findIndex(
+                (item) => item.status === "Opened" && item.expiryDate === result.expiryDate && item.din === result.din
+            );
+
+            // Find the index of the "Finished" status row
+            const finishedIndex = results.findIndex(
+                (item) => item.status === "Finished" && item.expiryDate === result.expiryDate && item.din === result.din
+            );
+
+            // Check if both "Opened" and "Finished" status rows were found
+            if (openedIndex !== -1 && finishedIndex !== -1) {
+                // Update the number of bottles for "Opened" and "Finished" statuses
+                const updatedResults = [...results];
+                updatedResults[openedIndex] = { ...updatedResults[openedIndex], bottles: updatedResults[openedIndex].bottles - 1 };
+                updatedResults[finishedIndex] = { ...updatedResults[finishedIndex], bottles: updatedResults[finishedIndex].bottles + 1 };
+
+                // Update the results state with the updated data
+                setResults(updatedResults);
+            } else {
+                console.error("Could not find 'Opened' or 'Finished' status row");
+            }
+    }
+
+    if (operationType === "Unopen 1") {
+          // Find the index of the "New" status row
+          const newIndex = results.findIndex(
+            (item) => item.status === "New" && item.expiryDate === result.expiryDate && item.din === result.din
+          );
+  
+          // Find the index of the "Opened" status row
+          const openedIndex = results.findIndex(
+            (item) => item.status === "Opened" && item.expiryDate === result.expiryDate && item.din === result.din
+          );
+  
+          // Check if both "New" and "Opened" status rows were found
+          if (newIndex !== -1 && openedIndex !== -1) {
+            // Update the number of bottles for "New" and "Opened" statuses
+            const updatedResults = [...results];
+            updatedResults[newIndex] = { ...updatedResults[newIndex], bottles: updatedResults[newIndex].bottles + 1 };
+            updatedResults[openedIndex] = { ...updatedResults[openedIndex], bottles: updatedResults[openedIndex].bottles - 1 };
+  
+            // Update the results state with the updated data
+            setResults(updatedResults);
+          } else {
+            console.error("Could not find 'New' or 'Opened' status row");
+          }
+    }
   };
 
   return (
@@ -97,9 +172,21 @@ export default function Home() {
                     <TableCell>{result.status}</TableCell>
                     <TableCell>{result.bottles}</TableCell>
                     <TableCell>
-                      <Button onClick={() => handleOperation(result)}>
-                        {result.status === "New" ? "Open 1" : "Finished 1"}
-                      </Button>
+                      {result.status === "New" && (
+                        <Button onClick={() => handleOperation(result, "Open 1")}>
+                          Open 1
+                        </Button>
+                      )}
+                      {result.status === "Opened" && (
+                        <>
+                          <Button onClick={() => handleOperation(result, "Finished 1")}>
+                            Finished 1
+                          </Button>
+                          <Button variant="destructive" onClick={() => handleOperation(result, "Unopen 1")}>
+                            Unopen 1
+                          </Button>
+                        </>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}

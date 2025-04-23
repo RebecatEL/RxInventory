@@ -182,6 +182,7 @@ export default function Home() {
                           <Button onClick={() => handleOperation(result, "Finished 1")}>
                             Finished 1
                           </Button>
+                          &nbsp;
                           <Button variant="destructive" onClick={() => handleOperation(result, "Unopen 1")}>
                             Unopen 1
                           </Button>
@@ -200,3 +201,4 @@ export default function Home() {
     </div>
   );
 }
+

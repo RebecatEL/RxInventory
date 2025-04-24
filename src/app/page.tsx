@@ -32,6 +32,16 @@ export default function Home() {
         setHasSearched(true);
 
         const filteredData = dummyData.filter((item) => item.din === din);
+
+        // Custom sort function to prioritize status order
+        const statusOrder = ["New", "Opened", "Finished", "Expired"];
+        filteredData.sort((a, b) => {
+          const aIndex = statusOrder.indexOf(a.status);
+          const bIndex = statusOrder.indexOf(b.status);
+          return aIndex - bIndex; // Sort by status order
+        });
+
+
         setResults(filteredData);
         if (filteredData.length > 0) {
           setDinName(filteredData[0].name);

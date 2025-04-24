@@ -9,14 +9,20 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function Home() {
   const [din, setDin] = useState("");
+  const [dinName, setDinName] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [isDinValid, setIsDinValid] = useState(true);
   const [hasSearched, setHasSearched] = useState(false);
 
   const dummyData = [
-    { din: "01234567", expiryDate: "01/2025", status: "New", bottles: 3 },
-    { din: "01234567", expiryDate: "01/2025", status: "Opened", bottles: 1 },
-    { din: "01234567", expiryDate: "03/2025", status: "New", bottles: 5 },
+    { din: "01234567", name: "Test Name", type: "100", expiryDate: "01/2025", status: "Opened", bottles: 1 },
+    { din: "01234567", name: "Test Name", type: "100", expiryDate: "01/2025", status: "New", bottles: 3 },
+    { din: "01234567", name: "Test Name", type: "100", expiryDate: "01/2025", status: "Finished", bottles: 2 },
+    { din: "01234567", name: "Test Name", type: "100", expiryDate: "01/2025", status: "Expired", bottles: 1 },
+    { din: "01234567", name: "Test Name", type: "30BLS", expiryDate: "03/2025", status: "Opened", bottles: 0 },
+    { din: "01234567", name: "Test Name", type: "30BLS", expiryDate: "03/2025", status: "New", bottles: 5 },
+    { din: "01234567", name: "Test Name", type: "30BLS", expiryDate: "03/2025", status: "Finished", bottles: 0 },
+    { din: "01234567", name: "Test Name", type: "30BLS", expiryDate: "03/2025", status: "Expired", bottles: 0 },
   ];
 
   useEffect(() => {
@@ -27,10 +33,16 @@ export default function Home() {
 
         const filteredData = dummyData.filter((item) => item.din === din);
         setResults(filteredData);
+        if (filteredData.length > 0) {
+          setDinName(filteredData[0].name);
+        } else {
+          setDinName("");
+        }
       } else {
         setIsDinValid(din.length === 0 || din.length === 8); // Only show error if something is entered
         setHasSearched(false);
         setResults([]);
+        setDinName("");
       }
     };
 
@@ -44,12 +56,12 @@ export default function Home() {
     if (operationType === "Open 1") {
       // Find the index of the "New" status row for this DIN and Expiry Date
       const newIndex = results.findIndex(
-        (item) => item.status === "New" && item.expiryDate === result.expiryDate && item.din === result.din
+        (item) => item.status === "New" && item.expiryDate === result.expiryDate && item.din === result.din && item.type === result.type
       );
   
       // Find the index of the "Opened" status row for this DIN and Expiry Date
       const openedIndex = results.findIndex(
-        (item) => item.status === "Opened" && item.expiryDate === result.expiryDate && item.din === result.din
+        (item) => item.status === "Opened" && item.expiryDate === result.expiryDate && item.din === result.din && item.type === result.type
       );
   
       // Check if both "New" and "Opened" status rows were found
@@ -69,12 +81,12 @@ export default function Home() {
     if (operationType === "Finished 1") {
             // Find the index of the "Opened" status row
             const openedIndex = results.findIndex(
-                (item) => item.status === "Opened" && item.expiryDate === result.expiryDate && item.din === result.din
+                (item) => item.status === "Opened" && item.expiryDate === result.expiryDate && item.din === result.din && item.type === result.type
             );
 
             // Find the index of the "Finished" status row
             const finishedIndex = results.findIndex(
-                (item) => item.status === "Finished" && item.expiryDate === result.expiryDate && item.din === result.din
+                (item) => item.status === "Finished" && item.expiryDate === result.expiryDate && item.din === result.din && item.type === result.type
             );
 
             // Check if both "Opened" and "Finished" status rows were found
@@ -94,12 +106,12 @@ export default function Home() {
     if (operationType === "Unopen 1") {
           // Find the index of the "New" status row
           const newIndex = results.findIndex(
-            (item) => item.status === "New" && item.expiryDate === result.expiryDate && item.din === result.din
+            (item) => item.status === "New" && item.expiryDate === result.expiryDate && item.din === result.din && item.type === result.type
           );
   
           // Find the index of the "Opened" status row
           const openedIndex = results.findIndex(
-            (item) => item.status === "Opened" && item.expiryDate === result.expiryDate && item.din === result.din
+            (item) => item.status === "Opened" && item.expiryDate === result.expiryDate && item.din === result.din && item.type === result.type
           );
   
           // Check if both "New" and "Opened" status rows were found
@@ -152,13 +164,17 @@ export default function Home() {
           <h2 className="text-lg font-semibold mb-2">
             Results for DIN: {din}
           </h2>
+          {dinName && (
+            <p className="text-md mb-2">Name: {dinName}</p>
+          )}
           {results.length > 0 ? (
             <Table>
               <TableCaption>
-                A list of drugs with the same DIN number, grouped by expiry date and status.
+                A list of drugs with the same DIN number, grouped by type, expiry date and status.
               </TableCaption>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Type</TableHead>
                   <TableHead>Expiry Date</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Number of Bottles</TableHead>
@@ -168,6 +184,7 @@ export default function Home() {
               <TableBody>
                 {results.map((result, index) => (
                   <TableRow key={index}>
+                    <TableCell>{result.type}</TableCell>
                     <TableCell>{result.expiryDate}</TableCell>
                     <TableCell>{result.status}</TableCell>
                     <TableCell>{result.bottles}</TableCell>
@@ -201,4 +218,5 @@ export default function Home() {
     </div>
   );
 }
+
 
